@@ -180,4 +180,7 @@ button:active {
   }
 }
 
-  
+:root {
+  touch-action: pan-x pan-y;
+  height: 100% 
+}
