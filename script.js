@@ -15,7 +15,7 @@ function divide(num1, num2) {
 }
 
 function round(num) {
-  return Math.round(num * 1000) / 1000;
+  return Math.round(num * 100) / 100;
 }
 
 function eNotation(num) {
@@ -101,7 +101,7 @@ equalsButton.addEventListener("click", () => {
 
 const decimalPointButton = document.querySelector("#decimal-point");
 decimalPointButton.addEventListener("click", () => {
-  if (!display.textContent.includes(".") && display.textContent.length < 9) {
+  if (!display.textContent.includes(".") && display.textContent.length < 8) {
     if (operatorRightBefore == false) {
       display.textContent += ".";
     } else {

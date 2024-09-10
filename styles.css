@@ -188,7 +188,12 @@ button:active {
   }
 
   #display {
-    font-size: 6.5vh;
+    height: 12vh;
+    font-size: 5.5vh;
+  }
+  
+  #expression {
+    top: 1.5%;
   }
 
   #main {
