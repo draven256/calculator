@@ -18,12 +18,12 @@ function round(num) {
   return Math.round(num * 1000) / 1000;
 }
 
-function eNotation(num){
-    if (num < 999999999999){
-        return num;
-    } else {
-        return num.toExponential(6)
-    }
+function eNotation(num) {
+  if (num <= 999999999) {
+    return num;
+  } else {
+    return num.toExponential(3);
+  }
 }
 
 function operate(num1, num2, operator) {
@@ -56,7 +56,7 @@ const display = document.querySelector("#display");
 const numButtonArray = document.querySelectorAll("#nums button, .num");
 numButtonArray.forEach((button) => {
   button.addEventListener("click", () => {
-    if (display.textContent.length < 13 || operatorRightBefore) {
+    if (display.textContent.length < 9 || operatorRightBefore) {
       if (operatorRightBefore || start) {
         display.textContent = button.textContent;
         operatorRightBefore = false;
@@ -67,7 +67,9 @@ numButtonArray.forEach((button) => {
         else {
           display.textContent += button.textContent;
         }
+        test1 = display.textContent;
       }
+      updateExpressionArr();
     }
   });
 });
@@ -75,16 +77,15 @@ numButtonArray.forEach((button) => {
 const operatorButtonArray = document.querySelectorAll("#right > button");
 operatorButtonArray.forEach((button) => {
   button.addEventListener("click", () => {
-    if (operator === null) {
-      // It's common to see users enter "5 + =", expecting the second value to be the same as first
-      num2 = num1;
-    } else if (!operatorRightBefore) {
+    if (!operatorRightBefore) {
       // For multi-operator expressions
       operate(+num1, +display.textContent, operator);
     }
     num1 = display.textContent;
     operator = button.textContent;
     operatorRightBefore = true;
+
+    arr = [num1, operator, "", ""];
   });
 });
 
@@ -92,14 +93,15 @@ const equalsButton = document.querySelector("#equals");
 equalsButton.addEventListener("click", () => {
   operate(+num1, +display.textContent, operator);
   num1 = display.textContent;
-  num2 = null;
   operator = null;
   operatorRightBefore = true;
+
+  arr[3] = "=";
 });
 
 const decimalPointButton = document.querySelector("#decimal-point");
 decimalPointButton.addEventListener("click", () => {
-  if (!display.textContent.includes(".")) {
+  if (!display.textContent.includes(".") && display.textContent.length < 9) {
     if (operatorRightBefore == false) {
       display.textContent += ".";
     } else {
@@ -107,6 +109,7 @@ decimalPointButton.addEventListener("click", () => {
     }
     operatorRightBefore = false;
     start = false;
+    updateExpressionArr();
   }
 });
 
@@ -123,16 +126,17 @@ negationButton.addEventListener("click", () => {
     arr.unshift("-");
     display.textContent = arr.join("");
   }
+  // EXPRESSION DISPLAY
+  updateExpressionArr();
 });
 
 const clearEntryButton = document.querySelector("#clear-entry");
-clearEntryButton.addEventListener(
-  "click",
-  () => {
-    if (display.textContent.length === 1) display.textContent = "0";
-    else display.textContent = display.textContent.slice(0, -1);
-  }
-);
+clearEntryButton.addEventListener("click", () => {
+  if (display.textContent.length === 1) display.textContent = "0";
+  else display.textContent = display.textContent.slice(0, -1);
+  // EXPRESSION DISPLAY
+  updateExpressionArr();
+});
 
 const allClearButton = document.querySelector("#all-clear");
 allClearButton.addEventListener("click", allClear);
@@ -141,18 +145,19 @@ function allClear() {
   display.textContent = "0";
 
   num1 = 0;
-  num2 = 0;
   operator = null;
 
   start = true;
   operatorRightBefore = false;
+
+  arr = [];
 }
 
 const percentButton = document.querySelector("#percent");
-percentButton.addEventListener(
-  "click",
-  () => (display.textContent = display.textContent / 100)
-);
+percentButton.addEventListener("click", () => {
+  display.textContent = display.textContent / 100;
+  updateExpressionArr();
+});
 
 let memory = 0;
 let memoryClear = false;
@@ -168,10 +173,33 @@ mrc.addEventListener("click", () => (display.textContent = memory));
 mrc.addEventListener("dblclick", () => (memory = 0));
 
 let num1;
-let num2;
 let operator;
 let start;
 let operatorRightBefore;
 
+// EXPRESSION DISPLAY //
+let exp = document.querySelector("#expression");
+
+let arr;
+
 allClear();
 
+function updateExpression(array) {
+  exp.textContent = array.join(" ");
+}
+
+function updateExpressionArr() {
+  if (operator === null) {
+    arr[0] = display.textContent;
+    arr[1] = "";
+    arr[2] = "";
+  } else {
+    arr[2] = display.textContent;
+  }
+  arr[3] = "";
+}
+
+calculatorBody = document.querySelector("#calculator-body");
+calculatorBody.addEventListener("click", () => {
+  updateExpression(arr);
+});
